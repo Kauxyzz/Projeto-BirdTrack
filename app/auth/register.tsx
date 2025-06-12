@@ -1,48 +1,59 @@
 import { useState } from 'react';
 import { View, TextInput, Button, Alert, StyleSheet } from 'react-native';
-import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
 import { auth } from '@/firebase/config';
 import { useRouter } from 'expo-router';
 
 export default function RegisterScreen() {
+  const [nome, setNome] = useState('');
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
   const router = useRouter();
 
   const handleRegister = async () => {
-    console.log("Tentando registrar usuário:", email);
-
-    if (!email || !senha) {
+    if (!nome || !email || !senha) {
       Alert.alert('Erro', 'Preencha todos os campos.');
       return;
     }
 
     try {
-      await createUserWithEmailAndPassword(auth, email, senha);
+      const userCredential = await createUserWithEmailAndPassword(auth, email, senha);
+      await updateProfile(userCredential.user, { displayName: nome });
+
       Alert.alert('Sucesso', 'Usuário registrado!');
       router.replace('/auth/login');
     } catch (error: any) {
       console.error("Erro no registro:", error);
-      Alert.alert('Erro ao registrar', error.message || 'Tente novamente.');
+      let message = error.message;
+      if (message.includes('email-already-in-use')) {
+        message = 'E-mail já cadastrado.';
+      }
+      Alert.alert('Erro ao registrar', message || 'Tente novamente.');
     }
   };
 
   return (
     <View style={styles.container}>
       <TextInput
-        placeholder="Email"
+        placeholder="Nome"
+        style={styles.input}
+        value={nome}
+        onChangeText={setNome}
+      />
+      <TextInput
+        placeholder="E-mail"
+        style={styles.input}
         value={email}
         onChangeText={setEmail}
-        style={styles.input}
         keyboardType="email-address"
         autoCapitalize="none"
       />
       <TextInput
         placeholder="Senha"
-        secureTextEntry
+        style={styles.input}
         value={senha}
         onChangeText={setSenha}
-        style={styles.input}
+        secureTextEntry
       />
       <Button title="Registrar" onPress={handleRegister} />
     </View>
@@ -50,13 +61,14 @@ export default function RegisterScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, justifyContent: 'center', padding: 20, backgroundColor: '#fff' },
+  container: { flex: 1, justifyContent: 'center', padding: 20 },
   input: {
-    borderWidth: 1,
+    height: 50,
     borderColor: '#ccc',
-    padding: 10,
+    borderWidth: 1,
     borderRadius: 8,
-    marginBottom: 10,
-    backgroundColor: '#f9f9f9',
+    marginBottom: 12,
+    paddingHorizontal: 10,
+    backgroundColor: 'white',
   },
 });
