@@ -8,19 +8,24 @@ import {
   updateDoc,
 } from "firebase/firestore";
 
+// ---------- TIPAGENS ----------
 export interface Documento {
   id?: string;
   nome: string;
   dataVencimento: string;
 }
 
-export interface Mortalidade {
+export interface Monitoramento {
   id?: string;
   data: string;
-  quantidade: number;
-  causa: string;
+  mortalidade: number;
+  mediaPeso: number;
+  status: string;
+  abate: string;
+  observacao: string;
 }
 
+// ---------- API ----------
 export const api = {
   // ---------- DOCUMENTOS ----------
   async getDocumentos(): Promise<Documento[]> {
@@ -44,25 +49,25 @@ export const api = {
     await updateDoc(doc(db, "documentos", id), dados);
   },
 
-  // ---------- MORTALIDADE ----------
-  async getMortalidades(): Promise<Mortalidade[]> {
-    const querySnapshot = await getDocs(collection(db, "mortalidade"));
+  // ---------- MONITORAMENTO DE PRODUÇÃO ----------
+  async getMonitoramentos(): Promise<Monitoramento[]> {
+    const querySnapshot = await getDocs(collection(db, "monitoramento"));
     return querySnapshot.docs.map((docItem) => ({
       id: docItem.id,
       ...docItem.data(),
-    })) as Mortalidade[];
+    })) as Monitoramento[];
   },
 
-  async addMortalidade(reg: Omit<Mortalidade, "id">): Promise<Mortalidade> {
-    const docRef = await addDoc(collection(db, "mortalidade"), reg);
+  async addMonitoramento(reg: Omit<Monitoramento, "id">): Promise<Monitoramento> {
+    const docRef = await addDoc(collection(db, "monitoramento"), reg);
     return { id: docRef.id, ...reg };
   },
 
-  async deleteMortalidade(id: string) {
-    await deleteDoc(doc(db, "mortalidade", id));
+  async deleteMonitoramento(id: string) {
+    await deleteDoc(doc(db, "monitoramento", id));
   },
 
-  async updateMortalidade(id: string, dados: Partial<Mortalidade>) {
-    await updateDoc(doc(db, "mortalidade", id), dados);
+  async updateMonitoramento(id: string, dados: Partial<Monitoramento>) {
+    await updateDoc(doc(db, "monitoramento", id), dados);
   },
 };
