@@ -1,8 +1,7 @@
 import { useState } from 'react';
 import { View, TextInput, Button, Alert, StyleSheet, ScrollView } from 'react-native';
-import { addDoc, collection } from 'firebase/firestore';
-import { db } from '@/firebase/config';
 import { useRouter } from 'expo-router';
+import { api } from '@/services/api'; // ✅ usamos a API centralizada
 
 export default function NovoMonitoramento() {
   const [data] = useState(new Date().toISOString().split('T')[0]);
@@ -30,19 +29,31 @@ export default function NovoMonitoramento() {
     };
 
     try {
-      await addDoc(collection(db, 'monitoramento'), novoRegistro);
+      await api.addMonitoramento(novoRegistro);
       Alert.alert('Sucesso', 'Registro salvo com sucesso!');
       router.replace('/monitoramento');
     } catch (error) {
-      Alert.alert('Erro', 'Erro ao salvar registro.');
+      Alert.alert('Erro', (error as Error).message || 'Erro ao salvar registro.');
     }
   };
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <TextInput style={styles.input} placeholder="Data" value={data} editable={false} />
-      <TextInput style={styles.input} placeholder="Mortalidade (quantidade)" keyboardType="numeric" value={mortalidade} onChangeText={setMortalidade} />
-      <TextInput style={styles.input} placeholder="Média de Peso (kg)" keyboardType="numeric" value={mediaPeso} onChangeText={setMediaPeso} />
+      <TextInput
+        style={styles.input}
+        placeholder="Mortalidade (quantidade)"
+        keyboardType="numeric"
+        value={mortalidade}
+        onChangeText={setMortalidade}
+      />
+      <TextInput
+        style={styles.input}
+        placeholder="Média de Peso (kg)"
+        keyboardType="numeric"
+        value={mediaPeso}
+        onChangeText={setMediaPeso}
+      />
       <TextInput style={styles.input} placeholder="Status" value={status} onChangeText={setStatus} />
       <TextInput style={styles.input} placeholder="Abate" value={abate} onChangeText={setAbate} />
       <TextInput style={styles.input} placeholder="Observação" value={observacao} onChangeText={setObservacao} />
