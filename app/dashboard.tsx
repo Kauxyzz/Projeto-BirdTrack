@@ -12,9 +12,9 @@ export default function Dashboard() {
         </TouchableOpacity>
       </Link>
 
-      <Link href="/mortalidade" asChild>
+      <Link href="/monitoramento" asChild>
         <TouchableOpacity style={styles.button}>
-          <Text style={styles.buttonText}>Mortalidade</Text>
+          <Text style={styles.buttonText}>Monitoramento de Produção</Text>
         </TouchableOpacity>
       </Link>
 
