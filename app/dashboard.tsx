@@ -1,8 +1,19 @@
-import { View, Text, StyleSheet, TouchableOpacity, ImageBackground } from "react-native";
-import { useRouter } from "expo-router";
+import { View, Text, TouchableOpacity, StyleSheet, ImageBackground, Alert } from "react-native";
+import { Link, useRouter } from "expo-router";
+import { auth } from "@/firebase/config";
+import { signOut } from "firebase/auth";
 
 export default function Dashboard() {
   const router = useRouter();
+
+  const handleLogout = async () => {
+    try {
+      await signOut(auth);
+      router.replace("/auth/login");
+    } catch (error) {
+      Alert.alert("Erro", "Não foi possível sair da conta.");
+    }
+  };
 
   return (
     <View style={{ flex: 1 }}>
@@ -15,25 +26,26 @@ export default function Dashboard() {
         <View style={styles.container}>
           <Text style={styles.title}>Gestão Avícola</Text>
 
-          <TouchableOpacity
-            style={styles.button}
-            onPress={() => router.push("/documentos")}
-          >
-            <Text style={styles.buttonText}>Documentos</Text>
-          </TouchableOpacity>
+          <Link href="/documentos" asChild>
+            <TouchableOpacity style={styles.button}>
+              <Text style={styles.buttonText}>Documentos</Text>
+            </TouchableOpacity>
+          </Link>
 
-          <TouchableOpacity
-            style={styles.button}
-            onPress={() => router.push("/monitoramento")}
-          >
-            <Text style={styles.buttonText}>Monitoramento de Produção</Text>
-          </TouchableOpacity>
+          <Link href="/monitoramento" asChild>
+            <TouchableOpacity style={styles.button}>
+              <Text style={styles.buttonText}>Monitoramento de Produção</Text>
+            </TouchableOpacity>
+          </Link>
 
-          <TouchableOpacity
-            style={styles.button}
-            onPress={() => router.push("/perfil")}
-          >
-            <Text style={styles.buttonText}>Alterar Perfil</Text>
+          <Link href="/perfil" asChild>
+            <TouchableOpacity style={styles.button}>
+              <Text style={styles.buttonText}>Alterar Perfil</Text>
+            </TouchableOpacity>
+          </Link>
+
+          <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
+            <Text style={styles.logoutButtonText}>Sair da Conta</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -54,30 +66,28 @@ const styles = StyleSheet.create({
   },
   overlay: {
     flex: 1,
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
     justifyContent: "center",
     alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
     padding: 20,
   },
   container: {
     backgroundColor: "rgba(255, 255, 255, 0.1)",
     borderRadius: 10,
     padding: 30,
-    width: '100%',
-    maxWidth: 400,
+    alignItems: "center",
   },
   title: {
     fontSize: 28,
     fontWeight: "bold",
     color: "#fff",
-    textAlign: "center",
-    marginBottom: 20,
+    marginBottom: 25,
   },
   button: {
     backgroundColor: "#003366",
-    paddingVertical: 12,
+    paddingVertical: 14,
+    paddingHorizontal: 35,
     borderRadius: 8,
-    alignItems: "center",
     marginBottom: 15,
   },
   buttonText: {
@@ -85,5 +95,17 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     fontSize: 16,
     textAlign: "center",
+  },
+  logoutButton: {
+    marginTop: 20,
+    backgroundColor: "#660000",
+    paddingVertical: 12,
+    paddingHorizontal: 25,
+    borderRadius: 8,
+  },
+  logoutButtonText: {
+    color: "#fff",
+    fontWeight: "bold",
+    fontSize: 16,
   },
 });

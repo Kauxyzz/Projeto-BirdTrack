@@ -32,7 +32,7 @@ export default function Perfil() {
     try {
       await auth.currentUser?.delete();
       Alert.alert("Conta excluída");
-      router.replace("/login");
+      router.replace("/auth/login");
     } catch (error) {
       Alert.alert("Erro", "Não foi possível excluir a conta.");
     }

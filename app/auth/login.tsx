@@ -33,55 +33,61 @@ export default function Login() {
         source={require("@/assets/images/FundoLogin.png")}
         style={styles.background}
         resizeMode="cover"
-      />
-      <View style={styles.overlay}>
-        <View style={styles.container}>
-          <Text style={styles.title}>BirdTrack</Text>
-          <Text style={styles.subtitle}>Acesse sua conta</Text>
-
-          <TextInput
-            style={styles.input}
-            placeholder="Email"
-            placeholderTextColor="#ccc"
-            keyboardType="email-address"
-            value={email}
-            onChangeText={setEmail}
-            autoCapitalize="none"
-          />
-
-          <TextInput
-            style={styles.input}
-            placeholder="Senha"
-            placeholderTextColor="#ccc"
-            secureTextEntry
-            value={senha}
-            onChangeText={setSenha}
-          />
-
-          <TouchableOpacity style={styles.button} onPress={handleLogin}>
-            <Text style={styles.buttonText}>Entrar</Text>
+      >
+        <View style={styles.overlay}>
+          <TouchableOpacity style={styles.backButton} onPress={() => router.replace("/")}>
+            <Text style={styles.backButtonText}>← Voltar</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity onPress={() => router.push("/auth/register")}>
-            <Text style={styles.registerText}>
-              Não tem uma conta? Crie uma agora.
-            </Text>
-          </TouchableOpacity>
+          <View style={styles.container}>
+            <Text style={styles.title}>BirdTrack</Text>
+            <Text style={styles.subtitle}>Acesse sua conta</Text>
+
+            <TextInput
+              style={styles.input}
+              placeholder="Email"
+              placeholderTextColor="#ccc"
+              keyboardType="email-address"
+              value={email}
+              onChangeText={setEmail}
+              autoCapitalize="none"
+            />
+
+            <TextInput
+              style={styles.input}
+              placeholder="Senha"
+              placeholderTextColor="#ccc"
+              secureTextEntry
+              value={senha}
+              onChangeText={setSenha}
+            />
+
+            <TouchableOpacity style={styles.button} onPress={handleLogin}>
+              <Text style={styles.buttonText}>Entrar</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity onPress={() => router.push("/auth/register")}>
+              <Text style={styles.registerText}>
+                Não tem uma conta? Crie uma agora.
+              </Text>
+            </TouchableOpacity>
+          </View>
         </View>
-      </View>
+      </ImageBackground>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   background: {
-    position: 'absolute',
+    flex: 1,
+    width: "100%",
+    height: "100%",
+    position: "absolute",
     top: 0,
     left: 0,
     right: 0,
     bottom: 0,
-    width: '100%',
-    height: '100%',
     zIndex: -1,
   },
   overlay: {
@@ -133,5 +139,18 @@ const styles = StyleSheet.create({
     textAlign: "center",
     marginTop: 10,
     fontSize: 14,
+  },
+  backButton: {
+    marginBottom: 20,
+    backgroundColor: "#003366",
+    paddingVertical: 10,
+    paddingHorizontal: 15,
+    borderRadius: 8,
+    alignSelf: "flex-start",
+  },
+  backButtonText: {
+    color: "#fff",
+    fontWeight: "bold",
+    fontSize: 16,
   },
 });
