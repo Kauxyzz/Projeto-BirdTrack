@@ -1,60 +1,145 @@
-import React, { useState } from 'react';
-import { View, TextInput, Button, Alert, StyleSheet } from 'react-native';
-import { updateUserProfile, deleteUserAccount } from '@/services/auth';
+import { useState } from "react";
+import {
+  View,
+  Text,
+  TextInput,
+  StyleSheet,
+  TouchableOpacity,
+  Alert,
+  ImageBackground,
+} from "react-native";
+import { useRouter } from "expo-router";
+import { auth } from "@/firebase/config";
+import { updateEmail, updatePassword } from "firebase/auth";
 
-export default function PerfilScreen() {
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+export default function Perfil() {
+  const [nome, setNome] = useState("");
+  const [email, setEmail] = useState("");
+  const [senha, setSenha] = useState("");
+  const router = useRouter();
 
-  const handleUpdate = async () => {
+  const handleAtualizarPerfil = async () => {
     try {
-      await updateUserProfile({ name, email, password });
-      Alert.alert('Sucesso', 'Perfil atualizado!');
-    } catch (err) {
-      Alert.alert('Erro', (err as Error).message);
+      if (email) await updateEmail(auth.currentUser!, email);
+      if (senha) await updatePassword(auth.currentUser!, senha);
+      Alert.alert("Sucesso", "Perfil atualizado com sucesso!");
+    } catch (error) {
+      Alert.alert("Erro", "Não foi possível atualizar o perfil.");
     }
   };
 
-  const handleDelete = async () => {
-    Alert.alert('Confirmação', 'Deseja mesmo excluir sua conta?', [
-      { text: 'Cancelar', style: 'cancel' },
-      {
-        text: 'Excluir',
-        style: 'destructive',
-        onPress: async () => {
-          try {
-            await deleteUserAccount();
-            Alert.alert('Conta excluída com sucesso!');
-          } catch (err) {
-            Alert.alert('Erro', (err as Error).message);
-          }
-        },
-      },
-    ]);
+  const handleExcluirConta = async () => {
+    try {
+      await auth.currentUser?.delete();
+      Alert.alert("Conta excluída");
+      router.replace("/login");
+    } catch (error) {
+      Alert.alert("Erro", "Não foi possível excluir a conta.");
+    }
   };
 
   return (
-    <View style={styles.container}>
-      <TextInput style={styles.input} placeholder="Novo nome" value={name} onChangeText={setName} />
-      <TextInput style={styles.input} placeholder="Novo e-mail" value={email} onChangeText={setEmail} />
-      <TextInput style={styles.input} placeholder="Nova senha" value={password} onChangeText={setPassword} secureTextEntry />
-      <Button title="Atualizar Perfil" onPress={handleUpdate} />
-      <View style={{ height: 10 }} />
-      <Button title="Excluir Conta" onPress={handleDelete} color="red" />
+    <View style={{ flex: 1 }}>
+      <ImageBackground
+        source={require("@/assets/images/FundoLogin.png")}
+        style={styles.background}
+        resizeMode="cover"
+      />
+      <View style={styles.overlay}>
+        <TouchableOpacity style={styles.backButton} onPress={() => router.push("/dashboard")}> 
+          <Text style={styles.backButtonText}>← Voltar</Text>
+        </TouchableOpacity>
+
+        <TextInput
+          style={styles.input}
+          placeholder="Novo nome"
+          placeholderTextColor="#ccc"
+          value={nome}
+          onChangeText={setNome}
+        />
+        <TextInput
+          style={styles.input}
+          placeholder="Novo e-mail"
+          placeholderTextColor="#ccc"
+          keyboardType="email-address"
+          value={email}
+          onChangeText={setEmail}
+        />
+        <TextInput
+          style={styles.input}
+          placeholder="Nova senha"
+          placeholderTextColor="#ccc"
+          secureTextEntry
+          value={senha}
+          onChangeText={setSenha}
+        />
+
+        <TouchableOpacity style={styles.button} onPress={handleAtualizarPerfil}>
+          <Text style={styles.buttonText}>ATUALIZAR PERFIL</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity style={styles.deleteButton} onPress={handleExcluirConta}>
+          <Text style={styles.buttonText}>EXCLUIR CONTA</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, justifyContent: 'center', padding: 20 },
+  background: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    width: "100%",
+    height: "100%",
+    zIndex: -1,
+  },
+  overlay: {
+    flex: 1,
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    padding: 20,
+    justifyContent: "center",
+  },
   input: {
-    height: 50,
-    borderColor: '#ccc',
-    borderWidth: 1,
+    backgroundColor: "#ffffffdd",
     borderRadius: 8,
-    marginBottom: 12,
-    paddingHorizontal: 10,
-    backgroundColor: 'white',
+    padding: 12,
+    marginBottom: 15,
+    fontSize: 16,
+    color: "#333",
+  },
+  button: {
+    backgroundColor: "#003366",
+    paddingVertical: 12,
+    borderRadius: 8,
+    alignItems: "center",
+    marginBottom: 15,
+  },
+  deleteButton: {
+    backgroundColor: "#cc0000",
+    paddingVertical: 12,
+    borderRadius: 8,
+    alignItems: "center",
+  },
+  buttonText: {
+    color: "#fff",
+    fontWeight: "bold",
+    fontSize: 16,
+  },
+  backButton: {
+    marginBottom: 20,
+    backgroundColor: "#003366",
+    paddingVertical: 10,
+    paddingHorizontal: 15,
+    borderRadius: 8,
+    alignSelf: "flex-start",
+  },
+  backButtonText: {
+    color: "#fff",
+    fontWeight: "bold",
+    fontSize: 16,
   },
 });

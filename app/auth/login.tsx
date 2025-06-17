@@ -1,5 +1,13 @@
 import { useState } from "react";
-import { View, Text, TextInput, Button, Alert, StyleSheet, TouchableOpacity } from "react-native";
+import {
+  View,
+  Text,
+  TextInput,
+  Alert,
+  StyleSheet,
+  TouchableOpacity,
+  ImageBackground,
+} from "react-native";
 import { useRouter } from "expo-router";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "@/firebase/config";
@@ -20,62 +28,110 @@ export default function Login() {
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Login</Text>
-
-      <TextInput
-        style={styles.input}
-        placeholder="Email"
-        keyboardType="email-address"
-        value={email}
-        onChangeText={setEmail}
-        autoCapitalize="none"
+    <View style={{ flex: 1 }}>
+      <ImageBackground
+        source={require("@/assets/images/FundoLogin.png")}
+        style={styles.background}
+        resizeMode="cover"
       />
+      <View style={styles.overlay}>
+        <View style={styles.container}>
+          <Text style={styles.title}>BirdTrack</Text>
+          <Text style={styles.subtitle}>Acesse sua conta</Text>
 
-      <TextInput
-        style={styles.input}
-        placeholder="Senha"
-        secureTextEntry
-        value={senha}
-        onChangeText={setSenha}
-      />
+          <TextInput
+            style={styles.input}
+            placeholder="Email"
+            placeholderTextColor="#ccc"
+            keyboardType="email-address"
+            value={email}
+            onChangeText={setEmail}
+            autoCapitalize="none"
+          />
 
-      <Button title="Entrar" onPress={handleLogin} />
+          <TextInput
+            style={styles.input}
+            placeholder="Senha"
+            placeholderTextColor="#ccc"
+            secureTextEntry
+            value={senha}
+            onChangeText={setSenha}
+          />
 
-      <TouchableOpacity onPress={() => router.push("/auth/register")}>
-        <Text style={styles.registerText}>
-          Não tem uma conta? Crie uma agora.
-        </Text>
-      </TouchableOpacity>
+          <TouchableOpacity style={styles.button} onPress={handleLogin}>
+            <Text style={styles.buttonText}>Entrar</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity onPress={() => router.push("/auth/register")}>
+            <Text style={styles.registerText}>
+              Não tem uma conta? Crie uma agora.
+            </Text>
+          </TouchableOpacity>
+        </View>
+      </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  background: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    width: '100%',
+    height: '100%',
+    zIndex: -1,
+  },
+  overlay: {
     flex: 1,
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
     justifyContent: "center",
     padding: 20,
-    backgroundColor: "#fff",
+  },
+  container: {
+    backgroundColor: "rgba(255, 255, 255, 0.1)",
+    borderRadius: 10,
+    padding: 25,
   },
   title: {
-    fontSize: 24,
+    fontSize: 32,
     fontWeight: "bold",
-    marginBottom: 20,
+    color: "#fff",
     textAlign: "center",
+    marginBottom: 10,
+  },
+  subtitle: {
+    fontSize: 18,
+    color: "#eee",
+    textAlign: "center",
+    marginBottom: 20,
   },
   input: {
-    borderWidth: 1,
-    borderColor: "#ccc",
+    backgroundColor: "#ffffffdd",
     borderRadius: 8,
     padding: 12,
-    marginBottom: 12,
-    backgroundColor: "#f9f9f9",
+    marginBottom: 15,
+    fontSize: 16,
+    color: "#333",
+  },
+  button: {
+    backgroundColor: "#003366",
+    paddingVertical: 12,
+    borderRadius: 8,
+    alignItems: "center",
+    marginBottom: 10,
+  },
+  buttonText: {
+    color: "#fff",
+    fontWeight: "bold",
+    fontSize: 16,
   },
   registerText: {
-    marginTop: 15,
-    color: "#007bff",
+    color: "#ffffff",
     textAlign: "center",
-    fontSize: 16,
+    marginTop: 10,
+    fontSize: 14,
   },
 });
